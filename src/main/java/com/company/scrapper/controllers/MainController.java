@@ -1,9 +1,13 @@
 package com.company.scrapper.controllers;
 
 import com.company.scrapper.api.AllegroApi;
+import com.company.scrapper.models.Offer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+
+import java.util.ArrayList;
 
 @Controller
 public class MainController {
@@ -12,7 +16,9 @@ public class MainController {
     AllegroApi allegroApi;
 
     @GetMapping("/app")
-    public String home() {
+    public String home(
+            Model model
+    ) {
         try {
             allegroApi.renewToken();
         } catch (Exception e) {
@@ -24,12 +30,18 @@ public class MainController {
     }
 
     @GetMapping("/search")
-    public String search() {
+    public String search(
+            Model model
+    ) {
+        ArrayList<Offer> offers = new ArrayList<Offer>();
         try {
-            allegroApi.getListOfItemsWithKeywordsAsJson("Harry Potter");
+            offers = allegroApi.getListOfItemsWithKeywordsAsJson("Harry Potter", 5, "+price");
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        for(Offer offer : offers) System.out.println(offer.toString());
+        model.addAttribute("offers", offers);
 
         return "mainView";
     }

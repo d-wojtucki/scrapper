@@ -1,20 +1,18 @@
 package com.company.scrapper.api;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.util.JSONPObject;
+import com.company.scrapper.models.Offer;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.stereotype.Service;
 
-
-import java.io.StringReader;
 import java.net.URI;
 import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -49,7 +47,6 @@ public class AllegroApi {
         HttpRequest request = HttpRequest.newBuilder()
                 .POST(buildFormDataFromMap(new HashMap<>()))
                 .uri(URI.create("https://allegro.pl/auth/oauth/token?grant_type=client_credentials"))
-                //.setHeader("User-Agent", "Java 11 HttpClient Bot")
                 .header("Authorization", "Basic NDY1YjYyNmZkOWM0NDBkZDg1NDllZjcwZjIzNTg1ZTk6OWlaTmpEWEthMWdSTFh1TnB4eDNLTzlxMDlVeWtDZ1FiVFQxR2lQV1h5V1J0ZVRSclJEVFVWdlZDMDZpem5lWg==")
                 .build();
 
@@ -70,10 +67,9 @@ public class AllegroApi {
 
     }
 
-    @SuppressWarnings("Duplicates")
-    public JsonObject getListOfItemsWithKeywordsAsJson(String keywords) throws Exception {
+    public ArrayList<Offer> getListOfItemsWithKeywordsAsJson(String keywords, int limit, String sortingMethod) throws Exception {
 
-        URI uri = new URI(("https://api.allegro.pl/sale/products?phrase=" + keywords).replace(" ", "%20"));
+        URI uri = new URI(("https://api.allegro.pl/offers/listing?phrase=" + keywords + "&sort=" + sortingMethod + "&limit=" + limit).replace(" ", "%20"));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -91,7 +87,34 @@ public class AllegroApi {
         // print response body
         System.out.println(response.body());
 
-        return new JsonObject();
+        JsonObject object = new JsonParser().parse(response.body()).getAsJsonObject();
+
+
+        JsonObject itemsArray = object.getAsJsonObject("items");
+        System.out.println(itemsArray.toString());
+        JsonArray objectArray = itemsArray.getAsJsonArray("promoted");
+        System.out.println(objectArray.size());
+
+        return generateListOfOffersFromObjectArray(objectArray);
     }
+
+    private ArrayList<Offer> generateListOfOffersFromObjectArray(JsonArray objectArray) {
+        ArrayList<Offer> offerList = new ArrayList<>();
+
+        for (int i=0;i<objectArray.size();i++) {
+            JsonObject insideObject = objectArray.get(i).getAsJsonObject();
+            String retrievedId = insideObject.getAsJsonPrimitive("id").toString();
+            String retrievedTitle = insideObject.getAsJsonPrimitive("name").toString();
+            String retrievedImage = insideObject.getAsJsonArray("images").get(0).getAsJsonObject().getAsJsonPrimitive("url").toString();
+            String retrievedPrice = insideObject.getAsJsonObject("sellingMode").getAsJsonObject("price").getAsJsonPrimitive("amount").toString();
+
+            offerList.add(new Offer(retrievedId, retrievedTitle, retrievedImage, retrievedPrice));
+        }
+
+        return offerList;
+
+    }
+
+
 
 }
