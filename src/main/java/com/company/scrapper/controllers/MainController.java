@@ -1,6 +1,7 @@
 package com.company.scrapper.controllers;
 
 import com.company.scrapper.api.AllegroApi;
+import com.company.scrapper.helpers.OfferHelper;
 import com.company.scrapper.models.Offer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -39,16 +40,26 @@ public class MainController {
     public String searchTest(
             Model model
     ) {
+        String keywords = "Harry Potter";
         ArrayList<Offer> offers = new ArrayList<Offer>();
         try {
-            offers = allegroApi.getListOfItemsWithKeywordsAsJson("Harry Potter", 5, "+price");
+            offers = allegroApi.getListOfItemsWithKeywordsAsJson(keywords, 5, "+price");
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        for(Offer offer : offers) System.out.println(offer.toString());
-        model.addAttribute("offers", offers);
 
+
+        String offerAvg = OfferHelper.generateAvg(offers);
+        OfferHelper.calculateDifferenceFromAverage(offers, offerAvg);
+
+        for(Offer offer : offers) System.out.println(offer.toString());
+        System.out.println("Offer avg: " + offerAvg);
+
+        model.addAttribute("keywords", keywords);
+        model.addAttribute("offers", offers);
+        model.addAttribute("offerCount", offers.size());
+        model.addAttribute("offerAvg", offerAvg);
         return "mainView";
     }
 
@@ -72,8 +83,19 @@ public class MainController {
             e.printStackTrace();
         }
 
+        String offerAvg = OfferHelper.generateAvg(offers);
+        OfferHelper.calculateDifferenceFromAverage(offers, offerAvg);
+
+        System.out.println("Offer avg: " + offerAvg);
         for(Offer offer : offers) System.out.println(offer.toString());
+
+
+        model.addAttribute("keywords", keywords);
         model.addAttribute("offers", offers);
+        model.addAttribute("offerCount", offers.size());
+        model.addAttribute("offerAvg", offerAvg);
         return "someView";
     }
+
+
 }

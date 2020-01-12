@@ -7,6 +7,7 @@ public class Offer {
     public String title;
     public String image;
     public String price;
+    public String difference;
 
     public Offer () {
 
@@ -51,8 +52,16 @@ public class Offer {
         this.price = price;
     }
 
+    public String getDifference() {
+        return difference;
+    }
+
+    public void setDifference(String price) {
+        this.difference = price;
+    }
+
     @Override
     public String toString() {
-        return "Id: " + this.id + ", title: " + this.title + ", price: " + this.price + ", image: " + this.image;
+        return "Id: " + this.id + ", title: " + this.title + ", price: " + this.price + ", image: " + this.image + ", " + this.difference;
     }
 }

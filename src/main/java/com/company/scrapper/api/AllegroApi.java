@@ -69,7 +69,8 @@ public class AllegroApi {
 
     public ArrayList<Offer> getListOfItemsWithKeywordsAsJson(String keywords, int limit, String sortingMethod) throws Exception {
 
-        URI uri = new URI(("https://api.allegro.pl/offers/listing?phrase=" + keywords + "&sort=" + sortingMethod + "&limit=" + limit).replace(" ", "%20"));
+        URI uri = new URI(("https://api.allegro.pl/offers/listing?phrase=" + keywords + "&sort=" + sortingMethod +
+                "&limit=" + limit).replace(" ", "%20"));
 
         HttpRequest request = HttpRequest.newBuilder()
                 .GET()
@@ -108,7 +109,8 @@ public class AllegroApi {
             String retrievedImage = insideObject.getAsJsonArray("images").get(0).getAsJsonObject().getAsJsonPrimitive("url").toString();
             String retrievedPrice = insideObject.getAsJsonObject("sellingMode").getAsJsonObject("price").getAsJsonPrimitive("amount").toString();
 
-            offerList.add(new Offer(retrievedId, retrievedTitle, retrievedImage, retrievedPrice));
+            offerList.add(new Offer(retrievedId.replace("\"", ""), retrievedTitle.replace("\"", ""),
+                    retrievedImage.replace("\"", ""), retrievedPrice.replace("\"", "")));
         }
 
         return offerList;
