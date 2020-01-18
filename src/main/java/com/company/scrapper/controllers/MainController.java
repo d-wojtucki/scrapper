@@ -3,21 +3,24 @@ package com.company.scrapper.controllers;
 import com.company.scrapper.api.AllegroApi;
 import com.company.scrapper.helpers.OfferHelper;
 import com.company.scrapper.models.Offer;
+import java.util.ArrayList;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-
-import java.util.ArrayList;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RequestMapping("/app")
 @Controller
 public class MainController {
 
-    @Autowired
-    AllegroApi allegroApi;
+    private final AllegroApi allegroApi;
+
+    public MainController(@Autowired AllegroApi allegroApi) throws Exception {
+        this.allegroApi = allegroApi;
+        allegroApi.renewToken();
+    }
 
 
     //TODO main view - strona glowna z search boxem strzelajaca getem na /search z 3 parametrami - opisanie nizej
@@ -25,11 +28,6 @@ public class MainController {
     public String home(
             Model model
     ) {
-        try {
-            allegroApi.renewToken();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         System.out.println("Token: " + allegroApi.token);
 
         return "mainView";
@@ -60,7 +58,9 @@ public class MainController {
         model.addAttribute("offers", offers);
         model.addAttribute("offerCount", offers.size());
         model.addAttribute("offerAvg", offerAvg);
-        return "mainView";
+        model.addAttribute("limit", 5);
+        model.addAttribute("sortingMethod", "+price");
+        return "searchResults";
     }
 
     /*
@@ -71,9 +71,9 @@ public class MainController {
     //TODO someview - widok listy itemow wraz z hiperlinkami budowanymi: allegro.pl/oferta/id
     @GetMapping("/search")
     public String search(
-            @ModelAttribute String keywords,
-            @ModelAttribute int limit,
-            @ModelAttribute String sortingMethod,
+            @RequestParam String keywords,
+            @RequestParam int limit,
+            @RequestParam String sortingMethod,
             Model model
             ) {
         ArrayList<Offer> offers = new ArrayList<Offer>();
@@ -92,9 +92,11 @@ public class MainController {
 
         model.addAttribute("keywords", keywords);
         model.addAttribute("offers", offers);
+        model.addAttribute("limit", limit);
         model.addAttribute("offerCount", offers.size());
         model.addAttribute("offerAvg", offerAvg);
-        return "someView";
+        model.addAttribute("sortingMethod", sortingMethod);
+        return "searchResults";
     }
 
 

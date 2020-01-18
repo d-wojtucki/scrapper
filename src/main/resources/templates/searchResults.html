@@ -1,0 +1,39 @@
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Hello</title>
+</head>
+<body>
+Wybrane słowa kluczowe: <B><text th:text="${keywords}"/></B>
+<br>
+Wybrany limit ofert: <B><text th:text="${limit}"/></B>
+<br>
+<a href="/app/">Powrót do wyszukiwania</a>
+<table border="1">
+    <thead>
+    <tr>
+        <th> Id </th>
+        <th> Title </th>
+        <th> Obrazek </th>
+        <th> Cena </th>
+        <th> Różnica </th>
+        <th> Link </th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:if="${offers.empty}">
+        <td colspan="2">Brak ofert</td>
+    </tr>
+    <tr th:each="offer : ${offers}">
+        <td><span th:text="${offer.id}"> Id </span></td>
+        <td><span th:text="${offer.title}"> Tytuł </span></td>
+        <td><img width=100px th:src="${offer.image}"></td>
+        <td><span th:text="${offer.price}"> Cena </span></td>
+        <td><span th:text="${offer.difference}"> Roznica </span></td>
+        <td><a  target="_blank" th:href="${'http://allegro.pl/oferta/' + offer.id}"> Link </a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+</body>

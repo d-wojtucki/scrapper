@@ -1,10 +1,38 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html SYSTEM "http://www.thymeleaf.org/dtd/xhtml1-strict-thymeleaf-spring4-4.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Hello</title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
 </head>
 <body>
+<!------ Include the above in your HEAD tag ---------->
 
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.1.0/css/all.css" integrity="sha384-lKuwvrZot6UHsBSfcMvOkWwlCMgc0TaWr+30HWe3a4ltaBwTZhyTEggF5tJv8tbt" crossorigin="anonymous">
+<div class="container">
+    <br/>
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
+                <div class="card-body row no-gutters align-items-center">
+                    <div class="col-auto">
+                        <i class="fas fa-search h4 text-body"></i>
+                    </div>
+                        <input id="searchBox" class="form-control form-control-lg form-control-borderless" type="search" placeholder="Słowa kluczowe">
+                        <input id="limitInput" class="form-control form-control-lg form-control-borderless" type="search" placeholder="Limit ofert">
+
+                        <button id="searchButton" class="btn btn-lg btn-success" type="submit">Search</button>
+                    <!--end of col-->
+                </div>
+        </div>
+        <!--end of col-->
+    </div>
+</div>
+<script>
+    $( "#searchButton" ).click(function() {
+        window.location.replace("http://localhost:8083/app/search?keywords=" + document.getElementById("searchBox").value + "&limit=" + document.getElementById("limitInput").value + "&sortingMethod=+price")
+    });
+</script>
 </body>
 </html>
+</body>

@@ -93,10 +93,12 @@ public class AllegroApi {
 
         JsonObject itemsArray = object.getAsJsonObject("items");
         System.out.println(itemsArray.toString());
-        JsonArray objectArray = itemsArray.getAsJsonArray("promoted");
+        JsonArray objectArray = itemsArray.getAsJsonArray("regular");
         System.out.println(objectArray.size());
 
-        return generateListOfOffersFromObjectArray(objectArray);
+        ArrayList<Offer> offers = generateListOfOffersFromObjectArray(objectArray);
+        offers.addAll(generateListOfOffersFromObjectArray(itemsArray.getAsJsonArray("promoted")));
+        return offers;
     }
 
     private ArrayList<Offer> generateListOfOffersFromObjectArray(JsonArray objectArray) {
